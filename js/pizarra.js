@@ -17,11 +17,21 @@ const porPantalla = 8;
 const pizarra = document.getElementById("pizarra");
 const ticker = document.getElementById("ticker-content");
 
-// Fecha de hoy REAL (no se modifica sola)
-const HOY = new Date().toISOString().split("T")[0];
-
-
 let mensajeIndex = 0;
+
+/* ---------- FECHA LOCAL CORRECTA ---------- */
+function obtenerHoyLocal() {
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
+  return hoy.getTime();
+}
+
+function fechaLocalDesdeTexto(fechaTexto) {
+  const [y, m, d] = fechaTexto.split("-");
+  const fecha = new Date(y, m - 1, d);
+  fecha.setHours(0, 0, 0, 0);
+  return fecha.getTime();
+}
 
 /* ---------- FIREBASE: ESCUCHAR CAMBIOS ---------- */
 firebase.database().ref("pizarra").on("value", snapshot => {
@@ -85,10 +95,13 @@ function renderizarPizarra() {
   const inicio = pagina * porPantalla;
   const visibles = sorteos.slice(inicio, inicio + porPantalla);
 
+  const hoyLocal = obtenerHoyLocal();
+
   visibles.forEach(s => {
     const icono = s.noche ? "🌙" : "☀️";
 
-    const esHoy = s.fecha === HOY;
+    const fechaSorteo = fechaLocalDesdeTexto(s.fecha);
+    const esHoy = fechaSorteo === hoyLocal;
 
     const fondoBolo = esHoy ? "#0a8f3c" : "#ffffff";
     const colorTexto = esHoy ? "#ffffff" : "#000000";
@@ -183,3 +196,4 @@ setInterval(mostrarAnuncioPantallaCompleta, 120000);
 document.addEventListener("DOMContentLoaded", () => {
   mostrarMensaje();
 });
+
