@@ -1,0 +1,220 @@
+/* =================================================
+   VARIABLES GLOBALES
+================================================= */
+:root {
+  --header-height: 24vh;   /* 🔥 un poco más alto */
+  --ticker-height: 7vh;    /* 🔥 menos espacio abajo */
+}
+
+/* =================================================
+   BASE
+================================================= */
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(180deg, #ff8c42, #ff3c1f);
+  color: white;
+}
+
+/* =================================================
+   WRAPPER BASE 1920x1080 (SIN ESCALAR)
+================================================= */
+#wrapper {
+  width: 1920px;
+  height: 1080px;
+  position: relative;
+}
+
+/* =================================================
+   HEADER
+================================================= */
+.header {
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 60px;
+
+  padding: 200px 10px 10px; /* 🔥 menos lados y abajo, más abajo visual */
+  box-sizing: border-box;
+}
+
+/* LOGO */
+.header-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo {
+  width: clamp(340px, 23vw, 480px); /* 🔥 un poco más grande */
+  height: auto;
+  display: block;
+}
+
+/* =================================================
+   ANUNCIOS
+================================================= */
+.header-anuncio {
+  flex: 1;
+  height: 100%;
+  background: #111;
+  border: 4px solid #ffffff;
+  border-radius: 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: clamp(28px, 2.4vw, 40px); /* 🔥 texto más grande */
+  font-weight: bold;
+  letter-spacing: 2px;
+
+  opacity: 0.95;
+  overflow: hidden;
+  position: relative;
+}
+
+.anuncio-contenido {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.anuncio-imagen,
+.anuncio-video {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 14px;
+}
+
+.anuncio-html {
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 14px;
+}
+
+/* =================================================
+   PIZARRA
+================================================= */
+#pizarra {
+  height: calc(100% - var(--header-height) - var(--ticker-height));
+
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); /* 🔥 más ancho */
+
+  gap: 45px;
+  padding: 30px 30px 20px; /* 🔥 menos izquierda/derecha y abajo */
+  box-sizing: border-box;
+
+  align-content: center;
+}
+
+/* TARJETA */
+.card {
+  text-align: center;
+}
+
+/* =================================================
+   BOLOS
+================================================= */
+.bolos {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 14px; /* 🔥 menos espacio */
+}
+
+.bolo {
+  width: clamp(120px, 8.5vw, 160px); /* 🔥 más grandes */
+  height: clamp(120px, 8.5vw, 160px);
+  border-radius: 50%;
+
+  font-size: clamp(44px, 3.8vw, 60px);
+  font-weight: bold;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-shadow:
+    inset -6px -6px 12px rgba(0,0,0,0.3),
+    inset 6px 6px 12px rgba(255,255,255,0.6),
+    0 14px 22px rgba(0,0,0,0.45);
+}
+
+.bolo.hoy {
+  background: radial-gradient(circle, #16da40, #04a938);
+  color: #ffffff;
+}
+
+.bolo.anterior {
+  background: radial-gradient(circle, #ffffff, #dcdcdc);
+  color: #000000;
+}
+
+/* =================================================
+   HORA Y FECHA
+================================================= */
+.hora {
+  margin-top: 12px; /* 🔥 menos aire */
+  font-size: clamp(28px, 2.4vw, 36px);
+
+  background: #111;
+  padding: 12px 70px;
+  border-radius: 12px;
+
+  display: inline-block;
+}
+
+.fecha {
+  margin-top: 6px; /* 🔥 menos aire */
+  font-size: clamp(26px, 2.2vw, 34px);
+  opacity: 0.95;
+}
+
+/* =================================================
+   PANTALLAS MUY GRANDES (TV)
+================================================= */
+@media (min-width: 1800px) {
+  :root {
+    --header-height: 25vh;
+    --ticker-height: 6vh;
+  }
+}
+
+/* =================================================
+   MÓVIL (solo respaldo)
+================================================= */
+@media (max-width: 768px) {
+  :root {
+    --header-height: 32vh;
+  }
+
+  .header {
+    flex-direction: column;
+    gap: 20px;
+    padding: 40px 20px;
+  }
+
+  .header-anuncio {
+    font-size: 20px;
+  }
+
+  .bolo {
+    width: 80px;
+    height: 80px;
+    font-size: 28px;
+  }
+}

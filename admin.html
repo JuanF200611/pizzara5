@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Admin Anguilla Express</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="css/admin.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+
+<!-- BOTÓN MENÚ MÓVIL -->
+<button id="btnMenuAdmin" class="btn-menu-admin" onclick="toggleMenu()">
+  ☰
+</button>
+
+<div class="admin">
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar">
+    <div class="logo">
+      <h2>🎰 ANGUILLA EXPRESS</h2>
+      <p style="color:#7f8c8d; font-size:14px; margin-top:5px;">
+        Panel Administrativo
+      </p>
+    </div>
+
+    <div class="menu">
+      <button onclick="vista('premios')">
+        <i class="fas fa-trophy"></i> 🎱 Premios
+      </button>
+
+      <button onclick="vista('anunciosPantalla')">
+        <i class="fas fa-desktop"></i> 📢 Pantalla Completa
+      </button>
+    </div>
+
+    <div class="version">
+      v1.0.0 | © 2024 Anguilla Express
+    </div>
+  </aside>
+
+  <!-- CONTENIDO -->
+  <main id="contenido">
+    <!-- JS carga aquí -->
+  </main>
+
+</div>
+
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+<script>
+  var firebaseConfig = {
+    databaseURL: "https://pizarra-loteria-36ba5-default-rtdb.firebaseio.com/"
+  };
+  firebase.initializeApp(firebaseConfig);
+</script>
+
+<!-- ADMIN JS -->
+<script src="js/admin.js"></script>
+
+</body>
+</html>

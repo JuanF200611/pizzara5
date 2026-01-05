@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Anguilla Express</title>
+
+  <!-- VIEWPORT NORMALIZADO -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="css/pizarra.css">
+</head>
+<body>
+
+  <!-- WRAPPER PARA ESCALADO -->
+  <div id="wrapper">
+
+    <!-- HEADER -->
+    <header class="header">
+      <div class="header-logo">
+        <img src="assets/logo.png" class="logo" alt="Anguilla Express">
+      </div>
+    </header>
+
+    <!-- PIZARRA -->
+    <main id="pizarra"></main>
+
+
+
+  </div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+  <script>
+    var firebaseConfig = {
+      databaseURL: "https://pizarra-loteria-36ba5-default-rtdb.firebaseio.com/"
+    };
+    firebase.initializeApp(firebaseConfig);
+  </script>
+
+  <!-- SCRIPTS -->
+  <script src="js/data.js"></script>
+  <script src="js/pizarra.js"></script>
+
+<script>
+function scalePage() {
+  const wrapper = document.getElementById("wrapper");
+  const windowWidth = window.innerWidth;
+  const windowHeight = window.innerHeight;
+
+  const designWidth = 1920;
+  const designHeight = 1080;
+  const designRatio = designWidth / designHeight;
+  const windowRatio = windowWidth / windowHeight;
+
+  let scale;
+
+  // decide si escalar por ancho o alto según la pantalla
+  if (windowRatio > designRatio) {
+    // pantalla más ancha que el diseño -> escala por alto
+    scale = windowHeight / designHeight;
+  } else {
+    // pantalla más alta o proporcionada -> escala por ancho
+    scale = windowWidth / designWidth;
+  }
+
+  wrapper.style.transform = `scale(${scale})`;
+  wrapper.style.transformOrigin = "top left";
+  wrapper.style.width = designWidth + "px";
+  wrapper.style.height = designHeight + "px";
+
+  // centra horizontal y verticalmente
+  const leftOffset = (windowWidth - designWidth * scale) / 2;
+  const topOffset = (windowHeight - designHeight * scale) / 2;
+
+  wrapper.style.position = "absolute";
+  wrapper.style.left = `${leftOffset}px`;
+  wrapper.style.top = `${topOffset}px`;
+}
+
+// ejecuta al cargar y al redimensionar
+window.addEventListener("load", scalePage);
+window.addEventListener("resize", scalePage);
+</script>
+
+
+</body>
+</html>
