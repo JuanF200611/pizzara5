@@ -11,36 +11,12 @@
 
 <body>
 
-<!-- BOTÓN MENÚ MÓVIL -->
-<button id="btnMenuAdmin" class="btn-menu-admin" onclick="toggleMenu()">
-  ☰
-</button>
+<header class="top-menu">
+  <button onclick="vista('premios')">🎱 Premios</button>
+  <button onclick="vista('anunciosPantalla')">📢 Anuncios</button>
+</header>
 
-<div class="admin">
 
-  <!-- SIDEBAR -->
-  <aside id="sidebar">
-    <div class="logo">
-      <h2>🎰 ANGUILLA EXPRESS</h2>
-      <p style="color:#7f8c8d; font-size:14px; margin-top:5px;">
-        Panel Administrativo
-      </p>
-    </div>
-
-    <div class="menu">
-      <button onclick="vista('premios')">
-        <i class="fas fa-trophy"></i> 🎱 Premios
-      </button>
-
-      <button onclick="vista('anunciosPantalla')">
-        <i class="fas fa-desktop"></i> 📢 Pantalla Completa
-      </button>
-    </div>
-
-    <div class="version">
-      v1.0.0 | © 2024 Anguilla Express
-    </div>
-  </aside>
 
   <!-- CONTENIDO -->
   <main id="contenido">
@@ -65,3 +41,5 @@
 
 </body>
 </html>
+
+
