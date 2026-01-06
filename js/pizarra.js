@@ -1,127 +1,98 @@
 /*************************************************
- * PIZARRA.JS – ANGUILLA LOTTERY EXPRESS
- * Fuente de datos: Firebase Realtime Database
+ * PIZARRA.JS – ANGUILLA LOTTERY EXPRESS (CORREGIDO)
  *************************************************/
 
 /* ---------- VARIABLES ---------- */
 let sorteos = [];
 let anuncios = [];
-let config = {
-  tiempoAnuncio: 15,
-  anunciosActivos: true
-};
+let config = { tiempoAnuncio: 15, anunciosActivos: true };
 
 let pagina = 0;
 const porPantalla = 8;
 
 const pizarra = document.getElementById("pizarra");
-const ticker = document.getElementById("ticker-content");
+const logo = document.getElementById("logo");
 
-let mensajeIndex = 0;
+let anuncioActivo = false;
+let ultimoAnuncio = null;
 
-/* ---------- FECHA LOCAL CORRECTA ---------- */
+/* ---------- FECHA ---------- */
 function obtenerHoyLocal() {
-  const hoy = new Date();
-  hoy.setHours(0, 0, 0, 0);
-  return hoy.getTime();
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  return d.getTime();
 }
 
-function fechaLocalDesdeTexto(fechaTexto) {
-  const [y, m, d] = fechaTexto.split("-");
-  const fecha = new Date(y, m - 1, d);
-  fecha.setHours(0, 0, 0, 0);
-  return fecha.getTime();
+function fechaLocalDesdeTexto(f) {
+  if (!f) return null;
+  const [y, m, d] = f.split("-");
+  const date = new Date(y, m - 1, d);
+  date.setHours(0, 0, 0, 0);
+  return date.getTime();
 }
 
-/* ---------- FIREBASE: ESCUCHAR CAMBIOS ---------- */
-firebase.database().ref("pizarra").on("value", snapshot => {
-  const data = snapshot.val();
+/* ---------- FIREBASE ---------- */
+firebase.database().ref("pizarra").on("value", snap => {
+  const data = snap.val();
   if (!data) return;
 
-  anuncios = data.anuncios || [];
-  config  = data.config  || config;
+  /* ✅ SOLO ANUNCIOS ACTIVOS (NO TOCA FIREBASE) */
+  anuncios = (data.anuncios || []).filter(a => a.activo === true);
+
+  config = data.config || config;
 
   if (data.sorteos) {
     const fechas = Object.keys(data.sorteos).sort();
-    const fechaActiva = fechas[fechas.length - 1];
-    sorteos = Object.values(data.sorteos[fechaActiva] || []);
+    sorteos = Object.values(data.sorteos[fechas.at(-1)]);
   } else {
     sorteos = [];
   }
 
   pagina = 0;
-  renderizarPizarra();
+  cambiarPaginaSuave();
 });
 
-/* ---------- TICKER ---------- */
-function mostrarMensaje() {
-  ticker.innerHTML = `
-    <div style="
-      width:100%;
-      height:100%;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:1.3rem;
-      font-weight:bold;
-      color:#FFD700;
-      background:linear-gradient(90deg,#8B0000,#B22222,#8B0000);
-      border-radius:8px;
-      text-shadow:2px 2px 4px #000;
-      border:2px solid #FFD700;
-      padding:15px;
-      text-align:center;
-    ">
-      ${mensajes[mensajeIndex]}
-    </div>
-  `;
-  mensajeIndex = (mensajeIndex + 1) % mensajes.length;
+/* ---------- TRANSICIÓN SUAVE ---------- */
+function cambiarPaginaSuave() {
+  const cards = document.querySelectorAll(".card");
+
+  cards.forEach(c => c.classList.add("card-salida"));
+
+  setTimeout(renderizarPizarra, 500);
 }
 
-/* ---------- RENDERIZAR PIZARRA ---------- */
+/* ---------- RENDER ---------- */
 function renderizarPizarra() {
   pizarra.innerHTML = "";
 
-  if (!sorteos.length) {
-    pizarra.innerHTML = `
-      <div style="color:#fff; font-size:1.5rem; text-align:center;">
-        ⏳ Esperando sorteos...
-      </div>
-    `;
-    return;
-  }
+  if (!sorteos.length) return;
 
   const totalPaginas = Math.ceil(sorteos.length / porPantalla);
   const inicio = pagina * porPantalla;
   const visibles = sorteos.slice(inicio, inicio + porPantalla);
-
-  const hoyLocal = obtenerHoyLocal();
+  const hoy = obtenerHoyLocal();
 
   visibles.forEach(s => {
-    const icono = s.noche ? "🌙" : "☀️";
-
-    const fechaSorteo = fechaLocalDesdeTexto(s.fecha);
-    const esHoy = fechaSorteo === hoyLocal;
-
-    const fondoBolo = esHoy ? "#0a8f3c" : "#ffffff";
-    const colorTexto = esHoy ? "#ffffff" : "#000000";
+    const esHoy = fechaLocalDesdeTexto(s.fecha) === hoy;
+    const fondo = esHoy ? "#0a8f3c" : "#fff";
+    const color = esHoy ? "#fff" : "#000";
 
     const card = document.createElement("div");
     card.className = "card";
 
     card.innerHTML = `
       <div class="bolos">
-        <div class="bolo" style="background:${fondoBolo}; color:${colorTexto};">
+        <div class="bolo" style="background:${fondo};color:${color}">
           ${s.premios?.[0] || "--"}
         </div>
-        <div class="bolo" style="background:${fondoBolo}; color:${colorTexto};">
+        <div class="bolo" style="background:${fondo};color:${color}">
           ${s.premios?.[1] || "--"}
         </div>
-        <div class="bolo" style="background:${fondoBolo}; color:${colorTexto};">
+        <div class="bolo" style="background:${fondo};color:${color}">
           ${s.premios?.[2] || "--"}
         </div>
       </div>
-      <div class="hora">${icono} ${s.hora}</div>
+      <div class="hora">${s.noche ? "🌙" : "☀️"} ${s.hora}</div>
       <div class="fecha">${s.fecha}</div>
     `;
 
@@ -131,27 +102,14 @@ function renderizarPizarra() {
   pagina = (pagina + 1) % totalPaginas;
 }
 
-/* ---------- ROTACIONES ---------- */
-setInterval(mostrarMensaje, 10000);
-setInterval(renderizarPizarra, 30000);
-
-/* ---------- ANUNCIOS PANTALLA COMPLETA ---------- */
-let anuncioActivo = false;
-let ultimoAnuncio = null;
-
+/* ---------- ANUNCIOS ---------- */
 function mostrarAnuncioPantallaCompleta() {
-  if (!config.anunciosActivos || anuncioActivo || !anuncios.length) return;
+  if (
+    !config.anunciosActivos ||
+    anuncioActivo ||
+    anuncios.length === 0
+  ) return;
 
-  const activos = anuncios.filter(a => a.activo !== false);
-  if (!activos.length) return;
-
-  let disponibles = activos;
-  if (ultimoAnuncio && activos.length > 1) {
-    disponibles = activos.filter(a => a.id !== ultimoAnuncio);
-  }
-
-  const anuncio = disponibles[Math.floor(Math.random() * disponibles.length)];
-  ultimoAnuncio = anuncio.id;
   anuncioActivo = true;
 
   const overlay = document.createElement("div");
@@ -163,37 +121,51 @@ function mostrarAnuncioPantallaCompleta() {
     display:flex;
     align-items:center;
     justify-content:center;
+    opacity:0;
+    transition:.5s;
   `;
-
-  let contenidoHTML = "";
-
-  if (anuncio.tipo === "imagen") {
-    contenidoHTML = `<img src="${anuncio.contenido}" style="max-width:100%;max-height:100%;object-fit:contain;">`;
-  } 
-  else if (anuncio.tipo === "video") {
-    contenidoHTML = `
-      <video autoplay ${anuncio.repetir ? "loop" : ""} muted style="width:100%;height:100%;object-fit:contain;">
-        <source src="${anuncio.contenido}">
-      </video>`;
-  } 
-  else {
-    contenidoHTML = anuncio.contenido;
-  }
-
-  overlay.innerHTML = contenidoHTML;
   document.body.appendChild(overlay);
+
+  /* 🎯 Anuncio aleatorio SOLO ENTRE ACTIVOS */
+  let anuncio;
+  do {
+    anuncio = anuncios[Math.floor(Math.random() * anuncios.length)];
+  } while (anuncios.length > 1 && anuncio === ultimoAnuncio);
+
+  ultimoAnuncio = anuncio;
+
+  if (anuncio.tipo === "video") {
+    const v = document.createElement("video");
+    v.src = anuncio.contenido;
+    v.muted = true;
+    v.autoplay = true;
+    v.preload = "auto";
+    v.playsInline = true;
+    v.style.cssText = "width:100%;height:100%;object-fit:contain";
+
+    v.oncanplaythrough = () => {
+      overlay.appendChild(v);
+      overlay.style.opacity = 1;
+      v.play();
+    };
+  }
 
   setTimeout(() => {
     overlay.remove();
     anuncioActivo = false;
+
+    /* 🔥 ANIMACIÓN DEL LOGO */
+    if (logo) {
+      logo.classList.remove("logo-entrada");
+      void logo.offsetWidth;
+      logo.classList.add("logo-entrada");
+    }
+
   }, (anuncio.duracion || config.tiempoAnuncio) * 1000);
 }
 
-/* ---------- CICLO DE ANUNCIOS ---------- */
+/* ---------- CICLOS ---------- */
+setInterval(cambiarPaginaSuave, 30000);
 setInterval(mostrarAnuncioPantallaCompleta, 120000);
 
-/* ---------- INIT ---------- */
-document.addEventListener("DOMContentLoaded", () => {
-  mostrarMensaje();
-});
 
