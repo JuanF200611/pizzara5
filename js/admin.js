@@ -69,7 +69,7 @@ function mostrarPremios() {
 
   cont.innerHTML = `
     <div class="card">
-      <h2>🎱 Sorteos – ${fechaActiva}</h2>
+    <h2>🎱Actualizar Sorteos</h2>
 
       <div class="lista-sorteos">
         ${sorteos.map((s, i) => `
@@ -189,4 +189,5 @@ function eliminarAnuncio(i) {
   DB.child("anuncios").set(anuncios);
   mostrarAnuncios();
 }
+
 
