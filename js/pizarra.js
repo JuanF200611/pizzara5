@@ -166,7 +166,8 @@ function mostrarAnuncioPantallaCompleta() {
 
 /* ---------- CICLOS ---------- */
 setInterval(cambiarPaginaSuave, 30000);
-setInterval(mostrarAnuncioPantallaCompleta, 50000);
+setInterval(mostrarAnuncioPantallaCompleta, 80000);
+
 
 
 
